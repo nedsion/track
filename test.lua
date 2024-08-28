@@ -46,6 +46,8 @@ local function sendRequest(data, prefix)
     for _, url in ipairs(urls) do
         -- url_encode
         url = url_encode(url .. qs)
+        print(url)
+        print('Sending data to server...')
         request({
             Url = url,
             Method = "GET",
