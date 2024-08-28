@@ -30,7 +30,7 @@ local function mqs(data, prefix)
             v = v == true and "true" or "false"
         end
         if typeof(prefix) == "string" then
-            qs = qs .. prefix .. string.lower(tostring(string.gsub(k, " ", ""))) .. "=" .. tostring(v) .. "&"
+            qs = qs .. prefix .. string.lower(tostring(string.gsub(k, " ", ""))) .. "=" .. string.gsub(tostring(v), " ", "") .. "&"
         end
     end
     return qs:sub(1, #qs - 1)
@@ -44,10 +44,9 @@ local urls = {
 local function sendRequest(data, prefix)
     local qs = mqs(data, prefix)
     for _, url in ipairs(urls) do
-        -- url_encode
-        url = url_encode(url .. qs)
+        print("requesting", url, qs)
         request({
-            Url = url,
+            Url = url .. qs,
             Method = "GET",
             Headers = {["Content-Type"] = "application/x-www-form-urlencoded"},
         })
@@ -100,7 +99,10 @@ end
 -- Blox Fruits Specific Functions
 local function handleBloxFruits()
     CommF = ReplicatedStorage.Remotes:FindFirstChild("CommF_")
-    print(CommF)
+
+    if not CommF then
+	return
+    end
 
     local function checkItem(itemName)
         local inventoryUpdateFunc = require(LocalPlayer.PlayerGui.Main.UIController.Inventory).UpdateRender
